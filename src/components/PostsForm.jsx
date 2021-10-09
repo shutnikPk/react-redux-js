@@ -1,24 +1,31 @@
 import React, { useState } from "react";
+import { connect } from "react-redux";
+import { createPost } from "../redux/actions";
 
-const PostsForm = () => {
-  const [title, setTitle] = useState("");
+const PostsForm = (props) => {
+  const [postTitle, setPostTitle] = useState("");
+
   const submitHandler = (event) => {
     event.preventDefault();
-    const { title } = title;
+    const { title } = postTitle;
+    if (!title || !title.trim()) return;
     const newPost = {
       title,
       id: Date.now().toString(),
     };
-    console.log(newPost);
-    setTitle({ title: "" });
+    props.createPost(newPost);
+    // console.log(newPost);
+    setPostTitle({ title: "" });
   };
+
   const changeInputHandler = (event) => {
     event.persist();
-    setTitle((prev) => ({
+    setPostTitle((prev) => ({
       ...prev,
       ...{ [event.target.name]: event.target.value },
     }));
   };
+
   return (
     <>
       <form onSubmit={submitHandler}>
@@ -30,7 +37,7 @@ const PostsForm = () => {
             type="text"
             className="form-control"
             id="title"
-            value={title.title}
+            value={postTitle.title}
             name="title"
             onChange={changeInputHandler}
           />
@@ -43,4 +50,8 @@ const PostsForm = () => {
   );
 };
 
-export default PostsForm;
+const mapDispatchToProps = {
+  createPost,
+};
+
+export default connect(null, mapDispatchToProps)(PostsForm);
